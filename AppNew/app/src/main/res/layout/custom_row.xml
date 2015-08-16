@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+
+            android:lines="1" />
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:id="@+id/mode"
+            android:src="@drawable/all"/>
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_switch"
+            android:layout_weight="5" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_name"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/event_time"
+            android:editable="false"
+            android:clickable="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:selectAllOnFocus="true"
+            />
+
+
+        <TextView
+            android:id="@+id/Sunday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+            android:text="S"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Monday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+
+
+            android:text="M"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Tuesday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+
+
+            android:text="T"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Wednesday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+            android:onClick="selectDeselect"
+
+            android:text="W"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Thrusday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+
+
+            android:text="T"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Friday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+
+
+            android:text="F"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/Saturday"
+            android:layout_width="25dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+
+
+            android:text="S"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TextView
+            android:id="@+id/garbagevalue"
+            android:layout_width="30dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+
+            android:src="@drawable/gnome_edit_delete"
+            android:layout_weight="0.01" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
