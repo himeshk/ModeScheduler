@@ -8,11 +8,44 @@ import java.io.Serializable;
 public class UserEvent implements Serializable {
     int id;
     String title;
-    String time;
+    String start_time;
+    String end_time;
     String mode;
     String endTime;
     boolean active;
     int weekday[];
+    int sun;
+    int mon;
+    int tue;
+    int wed;
+    int thur;
+    int fri;
+    int sat;
+
+    UserEvent(){
+        weekday=new int[7];
+        title="";
+        mode="";
+        active=false;
+        start_time="";
+        end_time="";
+    }
+
+    public String getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
+    }
 
     public int getSun() {
         return sun;
@@ -77,21 +110,6 @@ public class UserEvent implements Serializable {
         this.sat = sat;
     }
 
-    int sun;
-    int mon;
-    int tue;
-    int wed;
-    int thur;
-    int fri;
-    int sat;
-
-    UserEvent(){
-        weekday=new int[7];
-        title="";
-        time="";
-        mode="";
-        active=false;
-    }
 
     public int getId() {
         return id;
@@ -107,14 +125,6 @@ public class UserEvent implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
     }
 
     public String getMode() {

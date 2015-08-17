@@ -1,5 +1,6 @@
 package com.example.igulhane73.appnew;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,7 +30,9 @@ public class AddDialog extends ActionBarActivity {
     int thur;
     int fri;
     int sat;
-    private String mode="";
+    String start_time="00:00 AM";
+    String end_time="00:00 AM";
+    private String mode="All";
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.event_element);
@@ -42,7 +45,41 @@ public class AddDialog extends ActionBarActivity {
                 R.array.event_mode, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        mode="All";
+
+
+        final TextView start = (TextView) findViewById(R.id.start_time);
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = 0  , minutes = 0;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hour, int minutes) {
+                        start_time=getTime(hour,minutes);
+                        start.setText(start_time);
+                    }
+                } ,  hour, minutes, false);
+                timePickerDialog.show();
+
+            }
+        });
+
+        final TextView end = (TextView) findViewById(R.id.end_time);
+        end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int hour = 0  , minutes = 0;
+                TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hour, int minutes) {
+                        end_time=getTime(hour,minutes);
+                        end.setText(end_time);
+                    }
+                } ,  hour, minutes, false);
+                timePickerDialog.show();
+
+            }
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -55,12 +92,7 @@ public class AddDialog extends ActionBarActivity {
 
             }
         });
-        /*spinner.setOnItemSelectedListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-              mode=parent.getItemAtPosition(position).toString();
-            }
-        });*/
+
 
         final Button save_button = (Button) findViewById(R.id.save);
         save_button.setOnClickListener(new View.OnClickListener() {
@@ -68,22 +100,13 @@ public class AddDialog extends ActionBarActivity {
             public void onClick(View v) {
 
                 ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(getBaseContext());
-                String endTime = null;
                 int highestId = cdo.getHighestId(cdo.getWritableDatabase());
                 EditText etName = (EditText) findViewById(R.id.event_id);
-                TimePicker timeValue = (TimePicker) findViewById(R.id.time_event);
-                int hour = timeValue.getCurrentHour();
-                String temp = "AM";
-                if (hour > 12) {
-                    temp = "PM";
-                    hour = hour % 12;
-                }
-                String time = hour + ":" + timeValue.getCurrentMinute() +" "+temp;
                 Intent data = new Intent();
                 UserEvent userEvent = new UserEvent();
                 userEvent.setTitle(etName.getText().toString());
-                userEvent.setTime(time);
-                //userEvent.setWeekday(weekday);
+                userEvent.setStart_time(start_time);
+                userEvent.setEnd_time(end_time);
                 userEvent.setSun(sun);
                 userEvent.setMon(mon);
                 userEvent.setTue(tue);
@@ -96,7 +119,7 @@ public class AddDialog extends ActionBarActivity {
                 userEvent.setId(highestId);
                 data.putExtra("event", userEvent);
                 setResult(RESULT_OK, data);
-                cdo.addNewTimeConfig(cdo ,highestId , time,endTime , mode ,
+                cdo.addNewTimeConfig(cdo ,highestId , start_time,end_time , mode ,
                         "" + sun ,"" + mon ,"" + tue , "" + wed ,
                         "" + thur , "" + fri , "" + sat , etName.getText().toString() , true);
                 finish();
@@ -116,6 +139,27 @@ public class AddDialog extends ActionBarActivity {
         });
     }
 
+    public String getTime(int hour,int minute){
+        String am_pm = "AM";
+        if (hour > 12) {
+            am_pm = "PM";
+            hour = hour % 12;
+        }
+        StringBuffer time= new StringBuffer();
+        if(hour<10){
+            time.append("0"+hour+":");
+        }else{
+            time.append(hour+":");
+        }
+
+        if(minute<10){
+            time.append("0"+minute+" ");
+        }else{
+            time.append(minute+" ");
+        }
+        time.append(am_pm);
+        return time.toString();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -54,22 +54,24 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     public void onBindViewHolder(EventViewHolder holder, int position) {
         UserEvent event = eventList.get(position);
         holder.textView.setText(event.getTitle());
-        holder.timeView.setText(event.getTime());
-        holder.sunday.setTextColor(getColor(event.getSun()));
-        holder.monday.setTextColor(getColor(event.getMon()));
-        holder.tuesday.setTextColor(getColor(event.getTue()));
-        holder.wednesday.setTextColor(getColor(event.getWed()));
-        holder.thursday.setTextColor(getColor(event.getThur()));
-        holder.friday.setTextColor(getColor(event.getFri()));
-        holder.saturday.setTextColor(getColor(event.getSat()));
+        holder.start_time.setText(event.getStart_time());
+        holder.end_time.setText(event.getEnd_time());
+        holder.days_set[0]=event.getSun()==1?true:false;
+        holder.days_set[1]=event.getMon()==1?true:false;
+        holder.days_set[2]=event.getTue()==1?true:false;
+        holder.days_set[3]=event.getWed()==1?true:false;
+        holder.days_set[4]=event.getThur()==1?true:false;
+        holder.days_set[5]=event.getFri()==1?true:false;
+        holder.days_set[6]=event.getSat()==1?true:false;
         holder.toggle.setChecked(event.isActive());
-        if(event.mode=="All"){
+        String s=event.mode;
+        if(event.mode.equals("All")){
             holder.modebutton.setImageResource(R.drawable.all);
             holder.modebutton.setTag("All");
-        }else if(event.mode=="Priority"){
+        }else if(event.mode.equals("Priority")){
             holder.modebutton.setImageResource(R.drawable.silent);
             holder.modebutton.setTag("Priority");
-        }else{
+        }else if(event.mode.equals("None")){
             holder.modebutton.setImageResource(R.drawable.dnd);
             holder.modebutton.setTag("None");
         }
@@ -89,21 +91,25 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
     class EventViewHolder extends RecyclerView.ViewHolder {
         EditText textView;
-        TextView timeView;
+        TextView start_time;
+        TextView end_time;
         Switch toggle;
         ImageButton imageButton;
         ImageButton modebutton;
-        TextView sunday;
+        ImageButton weeklySchedule;
+        boolean days_set[]= new boolean[7];
+        /*TextView sunday;
         TextView tuesday;
         TextView wednesday;
         TextView thursday;
         TextView friday;
         TextView saturday;
-        TextView monday;
+        TextView monday;*/
 
         public EventViewHolder(View itemView) {
             super(itemView);
             textView = (EditText) itemView.findViewById(R.id.event_name);
+            String text=textView.getText().toString();
             textView.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -138,8 +144,30 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 }
             });
-            timeView = (TextView) itemView.findViewById(R.id.event_time);
-            View.OnClickListener openDateTime  = new View.OnClickListener() {
+            start_time = (TextView) itemView.findViewById(R.id.start_time);
+            start_time.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    int hour = 0, minutes = 0;
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker view, int hour, int minutes) {
+                            String time = getTime(hour, minutes);
+                            if (start_time.getText() != time) {
+                                start_time.setText(time);
+                                //Update query here
+                            }
+
+                        }
+                    }, hour, minutes, false);
+                    timePickerDialog.show();
+
+                }
+            });
+
+            end_time = (TextView) itemView.findViewById(R.id.end_time);
+            end_time.setOnClickListener( new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -147,29 +175,27 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hour, int minutes) {
-                            //Log.d(TAG, "selected time : "+hourOfDay+":"+minute);
-
+                            String time=getTime(hour, minutes);
+                            if(end_time.getText()!=time) {
+                                end_time.setText(time);
+                                //Update query here
+                            }
                         }
-                    } ,  hour, minutes, true);
+                    } ,  hour, minutes, false);
                     timePickerDialog.show();
-                    //timeView.setText(hour + ":" + minutes);
-
                 }
-            };
-            timeView.setOnClickListener(openDateTime);
+            });
             modebutton= (ImageButton) itemView.findViewById(R.id.mode);
             modebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(modebutton.getTag().toString()=="All"){
+                    if(modebutton.getTag().toString().equals("All")){
                         modebutton.setImageResource(R.drawable.silent);
                         modebutton.setTag("Priority");
-                    }
-                    if(modebutton.getTag().toString()=="Priority"){
+                    }else if(modebutton.getTag().toString().equals("Priority")){
                         modebutton.setImageResource(R.drawable.dnd);
                         modebutton.setTag("None");
-                    }
-                    if(modebutton.getTag().toString()=="None"){
+                    }else if(modebutton.getTag().toString().equals("None")){
                         modebutton.setImageResource(R.drawable.all);
                         modebutton.setTag("All");
                     }
@@ -200,103 +226,84 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 }
             });
+            final CharSequence[] items = {" Sunday "," Monday "," Tuesday "," Wednesday " ," Thursday ",
+            " Friday ", " Saturday "};
+            final boolean temp[]= new boolean[7];
+            for (int i=0;i<7;i++){
+                temp[i]=days_set[i];
+            }
+            weeklySchedule = (ImageButton) itemView.findViewById(R.id.week_schedule);
+            weeklySchedule.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(weeklySchedule.getContext());
+                    builder.setTitle("Current Schedule");
+                    builder.setMultiChoiceItems(items, days_set, new DialogInterface.OnMultiChoiceClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                            if (isChecked) {
+                                days_set[which] = true;
+                            } else {
+                                days_set[which] = false;
+                            }
+                        }
+                    });
+
+                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (int i=0;i<7;i++){
+                                days_set[i]=temp[i];
+                            }
+                        }
+                    });
+                    builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (int i=0;i<7;i++){
+                                temp[i]=days_set[i];
+                            }
+                            //Update query here
+                        }
+                    });
+                    builder.show();
+                }
+            });
+
             toggle = (Switch) itemView.findViewById(R.id.event_switch);
             toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (isChecked) {
                         eventList.get(getPosition()).setActive(true);
-                      //  notifyDataSetChanged();
                     } else {
                         eventList.get(getPosition()).setActive(false);
-                     //   notifyDataSetChanged();
                     }
 
                 }
             });
+        }
 
+        public String getTime(int hour,int minute){
+            String am_pm = "AM";
+            if (hour > 12) {
+                am_pm = "PM";
+                hour = hour % 12;
+            }
+            StringBuffer time= new StringBuffer();
+            if(hour<10){
+                time.append("0"+hour+":");
+            }else{
+                time.append(hour+":");
+            }
 
-            sunday = (TextView) itemView.findViewById(R.id.Sunday);
-            sunday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (sunday.getCurrentTextColor()== Color.BLACK) {
-                        sunday.setTextColor(Color.RED);
-                    }else {
-                        sunday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            monday = (TextView) itemView.findViewById(R.id.Monday);
-            monday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (monday.getCurrentTextColor()== Color.BLACK) {
-                        monday.setTextColor(Color.RED);
-                    }else {
-                        monday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            tuesday = (TextView) itemView.findViewById(R.id.Tuesday);
-            tuesday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (tuesday.getCurrentTextColor()== Color.BLACK) {
-                        tuesday.setTextColor(Color.RED);
-                    }else {
-                        tuesday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            wednesday = (TextView) itemView.findViewById(R.id.Wednesday);
-            wednesday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (wednesday.getCurrentTextColor()== Color.BLACK) {
-                        wednesday.setTextColor(Color.RED);
-                    }else {
-                        wednesday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            thursday = (TextView) itemView.findViewById(R.id.Thrusday);
-            thursday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (thursday.getCurrentTextColor()== Color.BLACK) {
-                        thursday.setTextColor(Color.RED);
-                    }else {
-                        thursday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            friday = (TextView) itemView.findViewById(R.id.Friday);
-            friday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (friday.getCurrentTextColor()== Color.BLACK) {
-                        friday.setTextColor(Color.RED);
-                    }else {
-                        friday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            saturday = (TextView) itemView.findViewById(R.id.Saturday);
-            saturday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (saturday.getCurrentTextColor()== Color.BLACK) {
-                        saturday.setTextColor(Color.RED);
-                    }else {
-                        saturday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
+            if(minute<10){
+                time.append("0"+minute+" ");
+            }else{
+                time.append(minute+" ");
+            }
+            time.append(am_pm);
+            return time.toString();
         }
 
     }

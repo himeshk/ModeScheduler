@@ -22,7 +22,7 @@
             android:layout_width="35dp"
             android:layout_height="match_parent"
             android:id="@+id/mode"
-            android:src="@drawable/all"/>
+            />
 
         <Switch
             android:layout_width="match_parent"
@@ -47,100 +47,49 @@
             android:layout_height="wrap_content"
             android:inputType="time"
             android:ems="10"
-            android:id="@+id/event_time"
+            android:id="@+id/start_time"
             android:editable="false"
             android:clickable="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:selectAllOnFocus="true"
             />
-
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:text="@string/dash"
+            />
+        <TextView
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/end_time"
+            android:editable="false"
+            android:clickable="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:selectAllOnFocus="true"
+            />
         <TextView
             android:id="@+id/Sunday"
-            android:layout_width="25dp"
+            android:layout_width="70dp"
             android:layout_height="33dp"
             android:layout_gravity="center_vertical"
             android:editable="false"
-            android:text="S"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <TextView
-            android:id="@+id/Monday"
-            android:layout_width="25dp"
+
+        <ImageButton
+            android:id="@+id/week_schedule"
+            android:layout_width="33dp"
             android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
+            android:src="@drawable/week_days"
+            android:layout_weight="0.01" />
 
-
-            android:text="M"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/Tuesday"
-            android:layout_width="25dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-
-
-            android:text="T"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/Wednesday"
-            android:layout_width="25dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-            android:onClick="selectDeselect"
-
-            android:text="W"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/Thrusday"
-            android:layout_width="25dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-
-
-            android:text="T"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/Friday"
-            android:layout_width="25dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-
-
-            android:text="F"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/Saturday"
-            android:layout_width="25dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-
-
-            android:text="S"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-        <TextView
-            android:id="@+id/garbagevalue"
-            android:layout_width="30dp"
-            android:layout_height="33dp"
-            android:layout_gravity="center_vertical"
-            android:editable="false"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
         <ImageButton
             android:id="@+id/delete"
             android:layout_width="33dp"
             android:layout_height="33dp"
-
             android:src="@drawable/gnome_edit_delete"
             android:layout_weight="0.01" />
 

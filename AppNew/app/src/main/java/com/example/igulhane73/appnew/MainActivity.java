@@ -42,18 +42,6 @@ public class MainActivity extends AppCompatActivity  {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // UserEvent event= new UserEvent();
-                //event.title="asdad";
-                //eventViewAdapter.eventList.add(event);
-               //List<Event> list= eventViewAdapter.eventList;
-                //eventViewAdapter= new EventViewAdapter(v.getContext(),list);
-               // recyclerView.setAdapter(eventViewAdapter);
-                //AddDialog addDialog = new AddDialog();
-                //addDialog.show(getFragmentManager(),"Add Alert");
-                //FragmentManager fragmentManager = getFragmentManager();
-                //FragmentTransaction  fragmentTransaction = fragmentManager.beginTransaction();
-                //fragmentTransaction.add(R.id.list,addDialog,"my");
-                //fragmentTransaction.commit();
                 Intent i = new Intent(MainActivity.this, AddDialog.class);
                 i.putExtra("mode", 2); // pass arbitrary data to launched activity
                 startActivityForResult(i, REQUEST_CODE);
