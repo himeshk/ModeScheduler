@@ -95,7 +95,8 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
 
     public Cursor retrieveNewTimeConfig(SQLiteDatabase sqlitedb , String where , String [] remainder){
 
-        String[] projections = {ConfigTableData.TimeConfigTableInfo.id ,
+        String[] projections = {
+        ConfigTableData.TimeConfigTableInfo.id ,
         ConfigTableData.TimeConfigTableInfo.time,
         ConfigTableData.TimeConfigTableInfo.Etime,
         ConfigTableData.TimeConfigTableInfo.mode  ,
@@ -118,7 +119,7 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
             final String MY_QUERY = "SELECT MAX(id) FROM " + ConfigTableData.TimeConfigTableInfo.Config_Table;
             Cursor mCursor = sqlitedb.rawQuery(MY_QUERY, null);
             id = mCursor.getInt(0);
-
+            System.out.println(id + " id is here ");
         }
         catch (Exception e){
             Log.d(" Error " , e.getMessage());
@@ -131,7 +132,8 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
         else
             return id;
     }
-    public void deleteUserData(SQLiteDatabase sqlitedb , String where , String whereArgs[]){
+    public void deleteUserData(SQLiteDatabase sqlitedb  , String where , String whereArgs[]){
+        System.out.println(" " + where);
         dbHelper.deleteUserData(sqlitedb, ConfigTableData.TimeConfigTableInfo.Config_Table, where, whereArgs);
     }
 

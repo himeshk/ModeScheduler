@@ -99,7 +99,7 @@ public class AddDialog extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(getBaseContext());
+                ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(getApplicationContext());
                 int highestId = cdo.getHighestId(cdo.getWritableDatabase());
                 EditText etName = (EditText) findViewById(R.id.event_id);
                 Intent data = new Intent();

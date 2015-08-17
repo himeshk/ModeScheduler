@@ -18,6 +18,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
+import com.example.igulhane73.appnew.info.ConfigTableData;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +31,13 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     private Context mContext;
     private LayoutInflater inflator;
     List<UserEvent> eventList = Collections.emptyList();
-
+    public EventViewAdapter(Context context){
+        mContext = context;
+    }
     public void delete(int position) {
         int id = eventList.get(position).getId();
+        ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(mContext);
+        cdo.deleteUserData(cdo.getWritableDatabase() , ConfigTableData.TimeConfigTableInfo.id + " = " + id , null );
         eventList.remove(position);
         notifyItemRemoved(position);
     }
