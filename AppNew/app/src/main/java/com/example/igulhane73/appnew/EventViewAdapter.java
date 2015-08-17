@@ -56,13 +56,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
         holder.textView.setText(event.getTitle());
         holder.start_time.setText(event.getStart_time());
         holder.end_time.setText(event.getEnd_time());
-        /*holder.sunday.setTextColor(getColor(event.getSun()));
-        holder.monday.setTextColor(getColor(event.getMon()));
-        holder.tuesday.setTextColor(getColor(event.getTue()));
-        holder.wednesday.setTextColor(getColor(event.getWed()));
-        holder.thursday.setTextColor(getColor(event.getThur()));
-        holder.friday.setTextColor(getColor(event.getFri()));
-        holder.saturday.setTextColor(getColor(event.getSat()));*/
         holder.days_set[0]=event.getSun()==1?true:false;
         holder.days_set[1]=event.getMon()==1?true:false;
         holder.days_set[2]=event.getTue()==1?true:false;
@@ -116,6 +109,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
         public EventViewHolder(View itemView) {
             super(itemView);
             textView = (EditText) itemView.findViewById(R.id.event_name);
+            String text=textView.getText().toString();
             textView.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -195,13 +189,13 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             modebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(modebutton.getTag().toString()=="All"){
+                    if(modebutton.getTag().toString().equals("All")){
                         modebutton.setImageResource(R.drawable.silent);
                         modebutton.setTag("Priority");
-                    }else if(modebutton.getTag().toString()=="Priority"){
+                    }else if(modebutton.getTag().toString().equals("Priority")){
                         modebutton.setImageResource(R.drawable.dnd);
                         modebutton.setTag("None");
-                    }else if(modebutton.getTag().toString()=="None"){
+                    }else if(modebutton.getTag().toString().equals("None")){
                         modebutton.setImageResource(R.drawable.all);
                         modebutton.setTag("All");
                     }
@@ -288,90 +282,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 }
             });
-
-
-
-            /*sunday = (TextView) itemView.findViewById(R.id.Sunday);
-            sunday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (sunday.getCurrentTextColor()== Color.BLACK) {
-                        sunday.setTextColor(Color.RED);
-                    }else {
-                        sunday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            monday = (TextView) itemView.findViewById(R.id.Monday);
-            monday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (monday.getCurrentTextColor()== Color.BLACK) {
-                        monday.setTextColor(Color.RED);
-                    }else {
-                        monday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            tuesday = (TextView) itemView.findViewById(R.id.Tuesday);
-            tuesday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (tuesday.getCurrentTextColor()== Color.BLACK) {
-                        tuesday.setTextColor(Color.RED);
-                    }else {
-                        tuesday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            wednesday = (TextView) itemView.findViewById(R.id.Wednesday);
-            wednesday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (wednesday.getCurrentTextColor()== Color.BLACK) {
-                        wednesday.setTextColor(Color.RED);
-                    }else {
-                        wednesday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            thursday = (TextView) itemView.findViewById(R.id.Thrusday);
-            thursday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (thursday.getCurrentTextColor()== Color.BLACK) {
-                        thursday.setTextColor(Color.RED);
-                    }else {
-                        thursday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });
-            friday = (TextView) itemView.findViewById(R.id.Friday);
-            friday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (friday.getCurrentTextColor()== Color.BLACK) {
-                        friday.setTextColor(Color.RED);
-                    }else {
-                        friday.setTextColor(Color.BLACK);
-                    }
-                }
-            });
-            saturday = (TextView) itemView.findViewById(R.id.Saturday);
-            saturday.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (saturday.getCurrentTextColor()== Color.BLACK) {
-                        saturday.setTextColor(Color.RED);
-                    }else {
-                        saturday.setTextColor(Color.BLACK);
-                    }
-
-                }
-            });*/
         }
 
         public String getTime(int hour,int minute){

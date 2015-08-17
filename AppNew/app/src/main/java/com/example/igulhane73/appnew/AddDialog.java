@@ -85,7 +85,6 @@ public class AddDialog extends ActionBarActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mode=parent.getItemAtPosition(position).toString();
-                int i=1;
             }
 
             @Override
