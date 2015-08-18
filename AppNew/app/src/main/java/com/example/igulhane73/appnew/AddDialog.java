@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -101,6 +102,9 @@ public class AddDialog extends ActionBarActivity {
 
                 ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(getApplicationContext());
                 int highestId = cdo.getHighestId(cdo.getWritableDatabase());
+                highestId++;
+                Log.d(" Id 0" , highestId + " ");
+
                 EditText etName = (EditText) findViewById(R.id.event_id);
                 Intent data = new Intent();
                 UserEvent userEvent = new UserEvent();

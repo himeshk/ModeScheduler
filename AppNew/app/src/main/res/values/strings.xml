@@ -39,6 +39,6 @@
     <string name="button_chooseTime">Choose Time</string>
     <string name="title_activity_config">ConfigActivity</string>
     <string name="dash"> - </string>
-
+    <string name="confirm">confirm</string>
 
 </resources>
