@@ -1,5 +1,6 @@
 package com.example.igulhane73.appnew;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,8 @@ import android.widget.Toast;
 import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,6 +32,32 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // ensuring all database exists or created
+        //created alarm manager to check if the everyday loading pending intent is added
+        AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent regAlaram = new Intent(this ,EveryDayService.class);
+        // this is for the system to be able to distinguish pending intents
+        regAlaram.setAction("AddAlarmIntents");
+        regAlaram.setType("RepeatingAlarm");
+        //checking if alarmmanager pending intent already there
+        //PendingIntent pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_NO_CREATE);
+        //if not then create one
+        //and also start the service for now
+       // if (pi == null) {
+
+            //pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_UPDATE_CURRENT);
+            Calendar cl = Calendar.getInstance();
+            cl.set(Calendar.HOUR_OF_DAY , 0);
+            cl.set(Calendar.MINUTE , 0);
+            cl.set(Calendar.SECOND , 0);
+            System.out.println(cl.getTimeInMillis());
+            System.out.println(System.currentTimeMillis());
+            cl.set(Calendar.HOUR_OF_DAY , (new Date()).getHours());
+            cl.set(Calendar.MINUTE, (new Date()).getMinutes());
+            cl.set(Calendar.SECOND, (new Date()).getSeconds());
+            System.out.println(cl.getTimeInMillis());
+            //am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP ,cl.getTimeInMillis(), 24*60*60*1000 , pi);
+            startService(regAlaram);
+        //}
         ConfigDatabaseOperations cdo =  new ConfigDatabaseOperations(getApplicationContext());
         //cdo.dropDB(cdo);
         cdo.createTables(cdo);
@@ -56,7 +85,7 @@ public class MainActivity extends AppCompatActivity  {
     public static List<UserEvent> getData(Context context){
         List<UserEvent> result= new ArrayList<UserEvent>();
         ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(context);
-        Cursor cur = cdo.retrieveNewTimeConfig(cdo.getWritableDatabase() , null , null);
+        Cursor cur = cdo.retrieveNewTimeConfig(cdo.getReadableDatabase() , null , null);
         if(cur.moveToFirst()) {
             do {
                 UserEvent event= new UserEvent();
