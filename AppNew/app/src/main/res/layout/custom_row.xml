@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+
+            android:lines="1" />
+
+        <ImageButton
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:id="@+id/mode"
+            />
+
+        <Switch
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_switch"
+            android:layout_weight="5" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/event_name"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/start_time"
+            android:editable="false"
+            android:clickable="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:selectAllOnFocus="true"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:editable="false"
+            android:text="@string/dash"
+            />
+        <TextView
+            android:layout_width="79dp"
+            android:layout_height="wrap_content"
+            android:inputType="time"
+            android:ems="10"
+            android:id="@+id/end_time"
+            android:editable="false"
+            android:clickable="true"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:selectAllOnFocus="true"
+            />
+        <TextView
+            android:id="@+id/Sunday"
+            android:layout_width="70dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center_vertical"
+            android:editable="false"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+        <ImageButton
+            android:id="@+id/week_schedule"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:src="@drawable/week_days"
+            android:layout_weight="0.01" />
+
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:src="@drawable/gnome_edit_delete"
+            android:layout_weight="0.01" />
+
+    </LinearLayout>
+
+
+</LinearLayout>
