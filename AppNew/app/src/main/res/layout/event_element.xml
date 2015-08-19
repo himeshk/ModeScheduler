@@ -29,7 +29,8 @@
             android:layout_weight="1"
             android:lines="1"
             android:maxLength="30"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:hint=" Enter event name "/>
 
 
     </LinearLayout>

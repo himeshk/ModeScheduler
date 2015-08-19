@@ -5,11 +5,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -118,40 +119,47 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             super(itemView);
             textView = (EditText) itemView.findViewById(R.id.event_name);
             String text=textView.getText().toString();
-            textView.addTextChangedListener(new TextWatcher() {
+            textView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public boolean onTouch(View v, MotionEvent event) {
+                    textView.setFocusable(true);
+                    Drawable dbl = ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.done, null) ;
+                    if (event.getRawX() >= (textView.getRight() - dbl.getIntrinsicWidth())){
+                    //textView.setFocusable(true);
+                        textView.setCompoundDrawables(null, null, null, null);
+                        textView.setFocusable(false);
+                        //textView.clearFocus();
+                        textView.setFocusableInTouchMode(false);
+                        ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                        ContentValues cv = new ContentValues();
+                        cv.put(ConfigTableData.TimeConfigTableInfo.name , textView.getText().toString());
+                        cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
                 }
+                    else{
+                        int h = dbl.getIntrinsicHeight();
+                        int w = dbl.getIntrinsicWidth();
+                        dbl.setBounds(0, 0, w, h);
+                        textView.setCompoundDrawables(null, null, dbl, null);
+                        textView.setFocusable(true);
+                        //textView.clearFocus();
+                        textView.setFocusableInTouchMode(true);
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-               /*     final String s1= (String) s;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(imageButton.getContext());
-                    builder.setTitle("Update Name");
-                    builder.setMessage("Do you want to save changes ?");
-                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            textView.setText(s1);
-                            notifyDataSetChanged();
-                        }
-                    });
-                    builder.show();*/
-                }
+                    }
 
-                @Override
-                public void afterTextChanged(final Editable s) {
-
-
+                    /*if (event.getX() > textView.getWidth() - textView.getPaddingRight() - x.getIntrinsicWidth()) {
+                        textView.setText("adas");
+                        //textView.setCompoundDrawables(null, null, null, null);
+                    }*/
+                    return false;
                 }
             });
+          /*View.OnClickListener onclicklistener = new View.OnClickListener() {
+                public void onClick(View v) {
+                    textView.setText((new String("HImesh ")).toCharArray() , 0 , 5);
+                    textView.setEnabled(true);
+                }
+            };*/
+            //textView.setOnClickListener(onclicklistener);
             start_time = (TextView) itemView.findViewById(R.id.start_time);
             start_time.setOnClickListener(new View.OnClickListener() {
 

@@ -15,13 +15,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-
+            android:editable="true"
+            android:enabled="true"
             android:lines="1" />
 
+            
         <ImageButton
             android:layout_width="35dp"
             android:layout_height="match_parent"
             android:id="@+id/mode"
+            android:background="@null"
             />
 
         <Switch
@@ -84,6 +87,7 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:src="@drawable/week_days"
+            android:background="@null"
             android:layout_weight="0.01" />
 
         <ImageButton
@@ -91,9 +95,8 @@
             android:layout_width="33dp"
             android:layout_height="33dp"
             android:src="@drawable/gnome_edit_delete"
+            android:background="@null"
             android:layout_weight="0.01" />
 
     </LinearLayout>
-
-
 </LinearLayout>
