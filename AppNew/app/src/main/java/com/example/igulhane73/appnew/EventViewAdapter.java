@@ -1,6 +1,7 @@
 package com.example.igulhane73.appnew;
 
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -18,6 +19,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
+import com.example.igulhane73.appnew.info.ConfigTableData;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -28,9 +32,13 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     private Context mContext;
     private LayoutInflater inflator;
     List<UserEvent> eventList = Collections.emptyList();
-
+    public EventViewAdapter(Context context){
+        mContext = context;
+    }
     public void delete(int position) {
         int id = eventList.get(position).getId();
+        ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(mContext);
+        cdo.deleteUserData(cdo.getWritableDatabase() , ConfigTableData.TimeConfigTableInfo.id + " = " + id , null );
         eventList.remove(position);
         notifyItemRemoved(position);
     }
@@ -106,7 +114,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
         TextView saturday;
         TextView monday;*/
 
-        public EventViewHolder(View itemView) {
+        public EventViewHolder(final View itemView) {
             super(itemView);
             textView = (EditText) itemView.findViewById(R.id.event_name);
             String text=textView.getText().toString();
@@ -157,6 +165,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                             if (start_time.getText() != time) {
                                 start_time.setText(time);
                                 //Update query here
+                                ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(view.getContext());
+                                ContentValues cv = new ContentValues();
+                                cv.put(ConfigTableData.TimeConfigTableInfo.time , time);
+                                cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
                             }
 
                         }
@@ -179,6 +191,11 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                             if(end_time.getText()!=time) {
                                 end_time.setText(time);
                                 //Update query here
+                                ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                                ContentValues cv = new ContentValues();
+                                cv.put(ConfigTableData.TimeConfigTableInfo.Etime , time);
+                                cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
+
                             }
                         }
                     } ,  hour, minutes, false);
@@ -189,6 +206,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             modebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                    ContentValues cv = new ContentValues();
+                    cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
+                    cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
                     if(modebutton.getTag().toString().equals("All")){
                         modebutton.setImageResource(R.drawable.silent);
                         modebutton.setTag("Priority");
@@ -263,7 +284,16 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                             for (int i=0;i<7;i++){
                                 temp[i]=days_set[i];
                             }
-                            //Update query here
+                            ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                            ContentValues cv = new ContentValues();
+                            cv.put(ConfigTableData.TimeConfigTableInfo.SunDay , days_set[0]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.MonDay , days_set[1]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.TuesDay , days_set[2]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.WednesDay , days_set[3]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.ThursDay , days_set[4]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.FriDay , days_set[5]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.SaturDay , days_set[6]==true?""+1:""+0);
+                            cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
                         }
                     });
                     builder.show();
@@ -274,11 +304,18 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                    ContentValues cv = new ContentValues();
                     if (isChecked) {
                         eventList.get(getPosition()).setActive(true);
+                        cv.put(ConfigTableData.TimeConfigTableInfo.active, true);
+
                     } else {
                         eventList.get(getPosition()).setActive(false);
+                        cv.put(ConfigTableData.TimeConfigTableInfo.active, false);
+
                     }
+                    cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
 
                 }
             });

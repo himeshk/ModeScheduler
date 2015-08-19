@@ -95,7 +95,8 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
 
     public Cursor retrieveNewTimeConfig(SQLiteDatabase sqlitedb , String where , String [] remainder){
 
-        String[] projections = {ConfigTableData.TimeConfigTableInfo.id ,
+        String[] projections = {
+        ConfigTableData.TimeConfigTableInfo.id ,
         ConfigTableData.TimeConfigTableInfo.time,
         ConfigTableData.TimeConfigTableInfo.Etime,
         ConfigTableData.TimeConfigTableInfo.mode  ,
@@ -115,10 +116,17 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
     public int getHighestId(SQLiteDatabase sqlitedb ) {
         Integer id = null;
         try {
-            final String MY_QUERY = "SELECT MAX(id) FROM " + ConfigTableData.TimeConfigTableInfo.Config_Table;
+            //final String MY_QUERY = "SELECT MAX(id) As id FROM " + ConfigTableData.TimeConfigTableInfo.Config_Table;
+            final String MY_QUERY = " SELECT * FROM " + ConfigTableData.TimeConfigTableInfo.Config_Table + " ORDER BY id DESC LIMIT 1";
             Cursor mCursor = sqlitedb.rawQuery(MY_QUERY, null);
-            id = mCursor.getInt(0);
-
+            if (mCursor.moveToFirst()) {
+                id = mCursor.getInt(0);
+                System.out.println(mCursor.getInt(0));
+                System.out.println(mCursor.getInt(1));
+                return (id);
+            }
+            else
+                return (0);
         }
         catch (Exception e){
             Log.d(" Error " , e.getMessage());
@@ -131,11 +139,15 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
         else
             return id;
     }
-    public void deleteUserData(SQLiteDatabase sqlitedb , String where , String whereArgs[]){
+    public void deleteUserData(SQLiteDatabase sqlitedb  , String where , String whereArgs[]){
+        System.out.println(" " + where);
         dbHelper.deleteUserData(sqlitedb, ConfigTableData.TimeConfigTableInfo.Config_Table, where, whereArgs);
+
     }
 
-    public void updateUserData(SQLiteDatabase sqlitedb , String table , ContentValues cv , String where , String[] whereArgs){
+    public void updateUserData(ContentValues cv , String where , String[] whereArgs, String[] misc){
+        SQLiteDatabase sqlitedb = this.getWritableDatabase();
         dbHelper.updateUserData( sqlitedb ,  ConfigTableData.TimeConfigTableInfo.Config_Table,  cv , where ,  whereArgs);
     }
+
 }

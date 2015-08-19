@@ -1,6 +1,8 @@
 package com.example.igulhane73.appnew;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,14 +29,14 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // ensuring all database exists or created
-        ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(getBaseContext());
+        ConfigDatabaseOperations cdo =  new ConfigDatabaseOperations(getApplicationContext());
         //cdo.dropDB(cdo);
         cdo.createTables(cdo);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.event_list);
-        eventViewAdapter= new EventViewAdapter(this,getData());
+        eventViewAdapter= new EventViewAdapter(this,getData(this.getApplicationContext()));
         recyclerView.setAdapter(eventViewAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         Button button = (Button) findViewById(R.id.add_event);
@@ -51,8 +53,33 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-    public static List<UserEvent> getData(){
+    public static List<UserEvent> getData(Context context){
         List<UserEvent> result= new ArrayList<UserEvent>();
+        ConfigDatabaseOperations cdo = new ConfigDatabaseOperations(context);
+        Cursor cur = cdo.retrieveNewTimeConfig(cdo.getWritableDatabase() , null , null);
+        if(cur.moveToFirst()) {
+            do {
+                UserEvent event= new UserEvent();
+                //id INTEGER,time TEXT,Etime TEXT ,mode TEXT,
+                  //      Sunday TEXT,Monday TEXT,Tuesday TEXT,
+                    //    Wednesday TEXT,Thursday TEXT,Friday TEXT,Saturday TEXT,Name TEXT,active BOOLEAN
+                event.setId(cur.getInt(0));
+                event.setStart_time(cur.getString(1));
+                event.setEnd_time(cur.getString(2));
+                event.setMode(cur.getString(3));
+                event.setSun(Integer.parseInt(cur.getString(4)));
+                event.setMon(Integer.parseInt(cur.getString(5)));
+                event.setTue(Integer.parseInt(cur.getString(6)));
+                event.setWed(Integer.parseInt(cur.getString(7)));
+                event.setThur(Integer.parseInt(cur.getString(8)));
+                event.setFri(Integer.parseInt(cur.getString(9)));
+                event.setSat(Integer.parseInt(cur.getString(10)));
+                event.setTitle(cur.getString(11));
+                event.setActive((cur.getInt(12)>0));
+                result.add(event);
+
+            } while (cur.moveToNext());
+        }
       /*  String[] op={"a","b","c","d","e","f"};
         for (int i = 0; i < op.length; i++) {
             UserEvent event= new UserEvent();
@@ -61,7 +88,6 @@ public class MainActivity extends AppCompatActivity  {
         }*/
         return result;
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
