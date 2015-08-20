@@ -35,7 +35,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
+        <service android:name="com.example.igulhane73.appnew.EveryDayService"
+            android:label="@string/app_name"
+            android:enabled="true"/>
+        <service android:name="com.example.igulhane73.appnew.ChangeModeService"
+            android:label="@string/app_name"
+            android:enabled="true"/>
     </application>
+
+
 
 </manifest>

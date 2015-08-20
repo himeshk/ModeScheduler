@@ -49,6 +49,9 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
         catch (Exception e) {
             Log.d(" Error " , e.getMessage());
         }
+        finally {
+            cdo.close();
+        }
 
     }
 
@@ -88,7 +91,7 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
         }
         catch(Exception e){}
         finally {
-
+            tcdop.close();
         }
 
     }

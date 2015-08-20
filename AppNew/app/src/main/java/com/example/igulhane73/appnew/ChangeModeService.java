@@ -2,6 +2,7 @@ package com.example.igulhane73.appnew;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.IBinder;
 
 /**
@@ -19,6 +20,8 @@ public class ChangeModeService extends Service {
     @Override
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        AudioManager audioManager = (AudioManager)getSystemService(getApplication().AUDIO_SERVICE);
+
         return super.onStartCommand(intent, flags, startId);
     }
     @Override

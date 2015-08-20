@@ -32,9 +32,14 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // ensuring all database exists or created
+        ConfigDatabaseOperations cdo =  new ConfigDatabaseOperations(getApplicationContext());
+        //cdo.dropDB(cdo);
+        cdo.createTables(cdo);
         //created alarm manager to check if the everyday loading pending intent is added
         AlarmManager am = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
         Intent regAlaram = new Intent(this ,EveryDayService.class);
+
+       // regAlaram.put
         // this is for the system to be able to distinguish pending intents
         regAlaram.setAction("AddAlarmIntents");
         regAlaram.setType("RepeatingAlarm");
@@ -54,14 +59,11 @@ public class MainActivity extends AppCompatActivity  {
             cl.set(Calendar.HOUR_OF_DAY , (new Date()).getHours());
             cl.set(Calendar.MINUTE, (new Date()).getMinutes());
             cl.set(Calendar.SECOND, (new Date()).getSeconds());
-            System.out.println(cl.getTimeInMillis());
+            //System.out.println(cl.getTimeInMillis());
             //am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP ,cl.getTimeInMillis(), 24*60*60*1000 , pi);
             startService(regAlaram);
         //}
-        ConfigDatabaseOperations cdo =  new ConfigDatabaseOperations(getApplicationContext());
-        //cdo.dropDB(cdo);
-        cdo.createTables(cdo);
-        setContentView(R.layout.activity_main);
+           setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.event_list);
