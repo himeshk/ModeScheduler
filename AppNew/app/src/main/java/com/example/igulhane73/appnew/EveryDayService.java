@@ -1,7 +1,5 @@
 package com.example.igulhane73.appnew;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,13 +28,14 @@ public class EveryDayService extends Service {
     @Override
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //System.out.println("In here" );
-        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        // creating configDatabase
         ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(getApplicationContext());
         Calendar cl = Calendar.getInstance();
         int currentDay = cl.get(Calendar.DAY_OF_WEEK);
+        Log.d("OsrtComand EyDayService" ,"EveryDayService" );
         String daysToCheck[] = new String[2];
         int dayOfTheWeek[] =  new int[2];
+        //checking current day
         if (currentDay == Calendar.SUNDAY){
             daysToCheck[0] = ConfigTableData.TimeConfigTableInfo.SunDay;
             daysToCheck[1] = ConfigTableData.TimeConfigTableInfo.MonDay;
@@ -92,67 +91,41 @@ public class EveryDayService extends Service {
             if (cr.moveToFirst()) {
                 do {
                     // setting alarm for all alarms for the day and tomo ;
-                    AddingPDS.addPI(getApplicationContext() , 2 , "StartAlarm-" , name , id ,  );
-                    AudioManager audioManager = (AudioManager)getSystemService(getApplication().AUDIO_SERVICE);
-                    Intent temp = new Intent(getApplicationContext(), ChangeModeService.class);
-                    Intent temp2 = new Intent(getApplicationContext(), ChangeModeService.class);
+                    AudioManager am = (AudioManager) getSystemService(AUDIO_SERVICE);
+                    int id = cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.id);
+                    String time = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.time)) ;
+                    String mode = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.mode));
                     String name = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.name));
-                    String setActionStart = "-" + cr.getInt(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.id));
-                    String setActionStop = "+" + cr.getInt(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.id));
-                    temp.setType("StartAlaram-" + cr.getInt(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.id)));
-                    temp2.setType("StopAlaram+" + cr.getInt(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.id)));
-                    temp.putExtra("mode", cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.mode)));
-                    temp2.putExtra("mode", "" + audioManager.getRingerMode());
-                    int hour = Integer.parseInt(cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.time)).split(":")[0]);
-                    int minute = Integer.parseInt(cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.time)).split(":")[1].split(" ")[0]);
-                    String AMPM = (cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.time)).split(":")[1].split(" ")[1]).trim();
-                    AddingPDS.addPI(getApplicationContext() , 2 ,"StartAlarm+" , name, );
+                    int hour = Integer.parseInt(time.split(":")[0]);
+                    int minute = Integer.parseInt(time.split(":")[1].split(" ")[0]);
+                    String AMPM = (time.split(":")[1].split(" ")[1]).trim();
                     cl.set(Calendar.HOUR  , hour);
                     cl.set(Calendar.MINUTE  , minute);
                     cl.set(Calendar.SECOND , 50);
-                    cl.set(Calendar.AM_PM  , AMPM.equals("AM")?Calendar.AM:Calendar.PM);
-                    Log.d("AM PM", "" + AMPM.equals("AM"));
-
-                    if (cr.getString(cr.getColumnIndex(daysToCheck[0])).equals("1") && ((Calendar.getInstance()).getTimeInMillis() <= cl.getTimeInMillis()) ) {
-                        cl.set(Calendar.DAY_OF_WEEK, dayOfTheWeek[0]);
-                        temp.setAction("1" + setActionStart);
-                        Log.d("Start Time Day 1", "" + cl.getTimeInMillis());
-                        PendingIntent pd = PendingIntent.getService(getApplicationContext(),2, temp ,PendingIntent.FLAG_NO_CREATE);
-                        Log.d(" Current pd ", (pd == null) + "");
-                        Log.d(" info ", temp.getAction());
-                        Log.d(" Time Now and Later" , cl.getTimeInMillis() - Calendar.getInstance().getTimeInMillis() + " ");
-                        pd = PendingIntent.getService(getApplicationContext(),2, temp ,PendingIntent.FLAG_UPDATE_CURRENT);
-                        am.setExact(am.RTC_WAKEUP, cl.getTimeInMillis(), pd);
+                    cl.set(Calendar.AM_PM, AMPM.equals("AM") ? Calendar.AM : Calendar.PM);
+                    cl.set(Calendar.DAY_OF_WEEK , dayOfTheWeek[0]);
+                    Log.d(" Lets see" , " " + Calendar.getInstance().getTimeInMillis() + " "  + cl.getTimeInMillis());
+                    if (cr.getString(cr.getColumnIndex(daysToCheck[0])).equals("1") && ((Calendar.getInstance()).getTimeInMillis() <= cl.getTimeInMillis())) {
+                        AddingPDS.addPI(getApplicationContext(), 2, getString(R.string.startMode) , name, id, "-", mode, time, 1 ,dayOfTheWeek[0] );
                     }
                     if (cr.getString(cr.getColumnIndex(daysToCheck[1])).equals("1")) {
-                        cl.set(Calendar.DAY_OF_WEEK, dayOfTheWeek[1]);
-                        temp.setAction("2" + setActionStart);
-                        Log.d("Start Time Day 2", "" + cl.getTimeInMillis());
-                        PendingIntent pd = PendingIntent.getService(getApplicationContext(),3 , temp ,PendingIntent.FLAG_UPDATE_CURRENT);
-                        Log.d(" Expected and Current ", cl.getTimeInMillis() + " " +  Calendar.getInstance().getTimeInMillis());
-                        am.setExact(am.RTC_WAKEUP , cl.getTimeInMillis(),pd);
+                        AddingPDS.addPI(getApplicationContext(), 3, getString(R.string.startMode), name, id, "-", mode, time, 2 , dayOfTheWeek[1]);
                     }
-                    AMPM = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.Etime)).split(":")[1].split(" ")[1].trim();
-                    hour = Integer.parseInt(cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.Etime)).split(":")[0]);
-                    minute = Integer.parseInt(cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.Etime)).split(":")[1].split(" ")[0]);
+                    time = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.Etime)) ;
+                    mode = "" + am.getRingerMode();
+                    AMPM = (time.split(":")[1].split(" ")[1]).trim();
+                    hour = Integer.parseInt(time.split(":")[0]);
+                    minute = Integer.parseInt(time.split(":")[1].split(" ")[0]);
                     cl.set(Calendar.HOUR  , hour);
                     cl.set(Calendar.MINUTE  , minute);
                     cl.set(Calendar.SECOND , 50);
-                    System.out.println(cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.Etime)).split(":")[1].split(" ")[1]);
-                    cl.set(Calendar.AM_PM  , AMPM.equals("AM")?Calendar.AM:Calendar.PM);
+                    cl.set(Calendar.AM_PM, AMPM.equals("AM") ? Calendar.AM : Calendar.PM);
+                    cl.set(Calendar.DAY_OF_WEEK , dayOfTheWeek[0]);
                     if (cr.getString(cr.getColumnIndex(daysToCheck[0])).equals("1") && ((Calendar.getInstance()).getTimeInMillis() <= cl.getTimeInMillis()) ) {
-                        cl.set(Calendar.DAY_OF_WEEK, dayOfTheWeek[0]);
-                        Log.d("Stop Time Day 1", "" + cl.getTimeInMillis());
-                        temp2.setAction("1" + setActionStop);
-                        PendingIntent pd1 = PendingIntent.getService(getApplicationContext(), 1, temp2, PendingIntent.FLAG_UPDATE_CURRENT);
-                        am.setExact(am.RTC_WAKEUP, cl.getTimeInMillis(), pd1);
+                        AddingPDS.addPI(getApplicationContext(), 4, getString(R.string.stopMode), name, id, "+", mode, time, 1, dayOfTheWeek[0]);
                     }
                     if (cr.getString(cr.getColumnIndex(daysToCheck[1])).equals("1")) {
-                        cl.set(Calendar.DAY_OF_WEEK , dayOfTheWeek[1]);
-                        temp2.setAction("2"  + setActionStop);
-                        Log.d("Stop Time Day 2", "" + cl.getTimeInMillis());
-                        PendingIntent pd1 = PendingIntent.getService(getApplicationContext(), 4, temp2, PendingIntent.FLAG_UPDATE_CURRENT);
-                        am.setExact(am.RTC_WAKEUP , cl.getTimeInMillis(),pd1);
+                        AddingPDS.addPI(getApplicationContext(), 5, getString(R.string.stopMode), name, id, "+", mode, time, 2,dayOfTheWeek[1]);
                     }
                 }while(cr.moveToNext());
             }

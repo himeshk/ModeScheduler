@@ -1,5 +1,6 @@
 package com.example.igulhane73.appnew;
 
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.widget.TimePicker;
 
 import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
 import com.example.igulhane73.appnew.info.ConfigTableData;
+import com.example.igulhane73.appnew.utils.AddingPDS;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,6 +85,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             holder.modebutton.setImageResource(R.drawable.dnd);
             holder.modebutton.setTag("None");
         }
+
     }
 
     public int getColor(int i){
@@ -133,6 +136,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                         ContentValues cv = new ContentValues();
                         cv.put(ConfigTableData.TimeConfigTableInfo.name , textView.getText().toString());
                         cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                        updateUsingId(true ,eventList.get(getPosition()));
                 }
                     else{
                         int h = dbl.getIntrinsicHeight();
@@ -178,7 +182,8 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                                 ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(view.getContext());
                                 ContentValues cv = new ContentValues();
                                 cv.put(ConfigTableData.TimeConfigTableInfo.time , time);
-                                cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                                cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                                updateUsingId(true ,eventList.get(getPosition()));
                             }
 
                         }
@@ -208,7 +213,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                                 ContentValues cv = new ContentValues();
                                 cv.put(ConfigTableData.TimeConfigTableInfo.Etime , time);
                                 cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
-
+                                updateUsingId(true ,eventList.get(getPosition()));
                             }
                         }
                     } ,  hour, minutes, false);
@@ -233,6 +238,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     ContentValues cv = new ContentValues();
                     cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
                     cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
+                    updateUsingId(true ,eventList.get(getPosition()));
                 }
             });
             imageButton = (ImageButton) itemView.findViewById(R.id.delete);
@@ -252,6 +258,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            updateUsingId(false ,eventList.get(getPosition()));
                             delete(getPosition());
                         }
                     });
@@ -304,8 +311,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                             cv.put(ConfigTableData.TimeConfigTableInfo.WednesDay , days_set[3]==true?""+1:""+0);
                             cv.put(ConfigTableData.TimeConfigTableInfo.ThursDay , days_set[4]==true?""+1:""+0);
                             cv.put(ConfigTableData.TimeConfigTableInfo.FriDay , days_set[5]==true?""+1:""+0);
-                            cv.put(ConfigTableData.TimeConfigTableInfo.SaturDay , days_set[6]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.SaturDay , days_set[6]==true?""+1:""+ 0);
                             cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
+                            updateUsingId(false ,eventList.get(getPosition()));
+                            updateUsingId(true ,eventList.get(getPosition()));
                         }
                     });
                     builder.show();
@@ -323,12 +332,13 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                         cv.put(ConfigTableData.TimeConfigTableInfo.active, true);
 
                     } else {
+                        updateUsingId(false ,eventList.get(getPosition()));
                         eventList.get(getPosition()).setActive(false);
                         cv.put(ConfigTableData.TimeConfigTableInfo.active, false);
 
                     }
                     cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
-
+                    updateUsingId(true ,eventList.get(getPosition()));
                 }
             });
         }
@@ -362,5 +372,30 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     public void addEvent(UserEvent event) {
         eventList.add(event);
         notifyDataSetChanged();
+    }
+    public void updateUsingId(boolean isUpdate , UserEvent ue){
+        if (isUpdate == false){
+            PendingIntent pd = AddingPDS.get_PendingIntent(mContext,
+            ue.getTitle(),2,ue.getId() , mContext.getString(R.string.startMode),
+            "-", ue.getMode(),1 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),3,ue.getId() , mContext.getString(R.string.startMode),
+                    "-", ue.getMode(),2 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),4,ue.getId() , mContext.getString(R.string.stopMode),
+                    "+", ue.getMode(),1 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),5,ue.getId() , mContext.getString(R.string.stopMode),
+                    "+", ue.getMode(),2 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+
+        }
+        else {
+            AddingPDS.updateAlarmById(ue.getId(), mContext);
+        }
+
     }
 }

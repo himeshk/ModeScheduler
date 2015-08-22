@@ -151,7 +151,6 @@ public class ConfigDatabaseOperations extends SQLiteOpenHelper {
     public void updateUserData(ContentValues cv , String where , String[] whereArgs, String[] misc){
         SQLiteDatabase sqlitedb = this.getWritableDatabase();
         dbHelper.updateUserData( sqlitedb ,  ConfigTableData.TimeConfigTableInfo.Config_Table,  cv , where ,  whereArgs);
-
         sqlitedb.close();
     }
 
