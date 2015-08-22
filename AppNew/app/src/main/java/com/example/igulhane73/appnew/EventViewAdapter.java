@@ -238,6 +238,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     ContentValues cv = new ContentValues();
                     cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
                     cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
+                    updateUsingId(false , eventList.get(getPosition()));
                     updateUsingId(true ,eventList.get(getPosition()));
                 }
             });

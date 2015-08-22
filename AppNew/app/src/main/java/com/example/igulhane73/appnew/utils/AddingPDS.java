@@ -114,8 +114,6 @@ public class AddingPDS {
                 do {
                     // setting alarm for all alarms for the day and tomo ;
                     AudioManager am = (AudioManager) context.getSystemService(context.AUDIO_SERVICE);
-
-
                     String time = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.time)) ;
                     String mode = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.mode));
                     String name = cr.getString(cr.getColumnIndex(ConfigTableData.TimeConfigTableInfo.name));
@@ -127,7 +125,7 @@ public class AddingPDS {
                     cl.set(Calendar.SECOND , 50);
                     cl.set(Calendar.AM_PM, AMPM.equals("AM") ? Calendar.AM : Calendar.PM);
                     cl.set(Calendar.DAY_OF_WEEK , dayOfTheWeek[0]);
-                    Log.d(" Lets see" , " " + Calendar.getInstance().getTimeInMillis() + " "  + cl.getTimeInMillis());
+                    Log.d(" Lets see" , " " + (Calendar.getInstance().getTimeInMillis() - cl.getTimeInMillis()));
                     if (cr.getString(cr.getColumnIndex(daysToCheck[0])).equals("1") && ((Calendar.getInstance()).getTimeInMillis() <= cl.getTimeInMillis())) {
                         AddingPDS.addPI(context, 2, context.getString(R.string.startMode) , name, id, "-", mode, time, 1 ,dayOfTheWeek[0] );
                     }
