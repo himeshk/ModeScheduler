@@ -44,6 +44,13 @@
             android:label="@string/set_mode_service"
             android:enabled="true"/>
 
+        <receiver android:name="com.example.igulhane73.appnew.startServiceOnBoot">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
     </application>
 
 
