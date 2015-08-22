@@ -40,5 +40,6 @@
     <string name="title_activity_config">ConfigActivity</string>
     <string name="dash"> - </string>
     <string name="confirm">confirm</string>
-
+    <string name="setting_every_day">every_day_service</string>
+    <string name="set_mode_service">mode_setter</string>
 </resources>

@@ -55,7 +55,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_row, null);
         EventViewHolder eventViewHolder = new EventViewHolder(view);
-
         return eventViewHolder;
     }
 
@@ -165,7 +164,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 @Override
                 public void onClick(View v) {
-                    int hour = 0, minutes = 0;
+                    int hour = Integer.parseInt(start_time.getText().toString().split(":")[0]) , minutes = Integer.parseInt(start_time.getText().toString().split(":")[1].split(" ")[0]);
+                    if (start_time.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                        hour = hour + 12;
+                    }
                     TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -191,7 +193,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 @Override
                 public void onClick(View v) {
-                    int hour = 0  , minutes = 0;
+                    int hour = Integer.parseInt(end_time.getText().toString().split(":")[0]) , minutes = Integer.parseInt(end_time.getText().toString().split(":")[1].split(" ")[0]);
+                    if (end_time.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                        hour = hour + 12;
+                    }
                     TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -214,10 +219,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             modebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
-                    ContentValues cv = new ContentValues();
-                    cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
-                    cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
                     if(modebutton.getTag().toString().equals("All")){
                         modebutton.setImageResource(R.drawable.silent);
                         modebutton.setTag("Priority");
@@ -228,7 +229,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                         modebutton.setImageResource(R.drawable.all);
                         modebutton.setTag("All");
                     }
-
+                    ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                    ContentValues cv = new ContentValues();
+                    cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
+                    cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
                 }
             });
             imageButton = (ImageButton) itemView.findViewById(R.id.delete);

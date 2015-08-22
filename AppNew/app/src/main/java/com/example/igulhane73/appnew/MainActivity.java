@@ -1,6 +1,7 @@
 package com.example.igulhane73.appnew;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +21,6 @@ import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -44,26 +45,24 @@ public class MainActivity extends AppCompatActivity  {
         regAlaram.setAction("AddAlarmIntents");
         regAlaram.setType("RepeatingAlarm");
         //checking if alarmmanager pending intent already there
-        //PendingIntent pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_NO_CREATE);
+        PendingIntent pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_NO_CREATE);
         //if not then create one
         //and also start the service for now
-       // if (pi == null) {
+        startService(regAlaram);
+       if (pi == null) {
 
-            //pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_UPDATE_CURRENT);
+            pi = PendingIntent.getService(this , 1 , regAlaram , PendingIntent.FLAG_UPDATE_CURRENT);
             Calendar cl = Calendar.getInstance();
             cl.set(Calendar.HOUR_OF_DAY , 0);
             cl.set(Calendar.MINUTE , 0);
-            cl.set(Calendar.SECOND , 0);
-            System.out.println(cl.getTimeInMillis());
-            System.out.println(System.currentTimeMillis());
-            cl.set(Calendar.HOUR_OF_DAY , (new Date()).getHours());
-            cl.set(Calendar.MINUTE, (new Date()).getMinutes());
-            cl.set(Calendar.SECOND, (new Date()).getSeconds());
+            cl.set(Calendar.SECOND, 0);
             //System.out.println(cl.getTimeInMillis());
-            //am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP ,cl.getTimeInMillis(), 24*60*60*1000 , pi);
-            startService(regAlaram);
-        //}
-           setContentView(R.layout.activity_main);
+            //System.out.println(System.currentTimeMillis());
+            //System.out.println(cl.getTimeInMillis());
+            am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP ,cl.getTimeInMillis(), 24*60*60*1000 , pi);
+            //startService(regAlaram);
+        }
+        setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.event_list);
@@ -97,6 +96,7 @@ public class MainActivity extends AppCompatActivity  {
                 event.setId(cur.getInt(0));
                 event.setStart_time(cur.getString(1));
                 event.setEnd_time(cur.getString(2));
+                Log.d("Mode in database ", cur.getString(3));
                 event.setMode(cur.getString(3));
                 event.setSun(Integer.parseInt(cur.getString(4)));
                 event.setMon(Integer.parseInt(cur.getString(5)));

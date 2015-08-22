@@ -52,7 +52,10 @@ public class AddDialog extends ActionBarActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int hour = 0  , minutes = 0;
+                int hour = Integer.parseInt(start.getText().toString().split(":")[0]) , minutes = Integer.parseInt(start.getText().toString().split(":")[1].split(" ")[0]);
+                if (start.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                    hour = hour + 12;
+                }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -69,7 +72,10 @@ public class AddDialog extends ActionBarActivity {
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int hour = 0  , minutes = 0;
+                int hour = Integer.parseInt(end.getText().toString().split(":")[0]) , minutes = Integer.parseInt(end.getText().toString().split(":")[1].split(" ")[0]);
+                if (end.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                    hour = hour + 12;
+                }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hour, int minutes) {
