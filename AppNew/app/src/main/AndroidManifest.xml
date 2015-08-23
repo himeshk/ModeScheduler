@@ -4,6 +4,10 @@
 
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -18,21 +22,41 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <uses-library android:name="com.google.android.maps" />
         </activity>
         <activity
-            android:name=".SubActivity"
+            android:name=".EventActivity"
             android:label="@string/title_activity_sub" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".AddDialog"
             android:label="@string/add_title" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+
+        <service
+            android:name=".EveryDayService"
+            android:enabled="true"
+            android:label="@string/setting_every_day" />
+        <service
+            android:name=".ChangeModeService"
+            android:enabled="true"
+            android:label="@string/set_mode_service" />
+
+        <activity
+            android:name=".DrivingActivity"
+            android:label="@string/title_activity_driving" >
         </activity>
     </application>
 

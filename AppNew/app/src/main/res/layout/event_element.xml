@@ -28,8 +28,10 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:lines="1"
+            android:maxLines="1"
             android:maxLength="30"
-            android:padding="10dp" />
+            android:padding="10dp"
+            android:hint=" Enter event name "/>
 
 
     </LinearLayout>
@@ -106,7 +108,32 @@
             android:text="00:00 AM"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:padding="10dp"
+            android:text="Location :"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/event_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:lines="1"
+            android:maxLines="1"
+            android:maxLength="50"
+             />
+
+
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/bottom_items"
         android:layout_width="match_parent"

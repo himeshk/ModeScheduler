@@ -1,15 +1,17 @@
 package com.example.igulhane73.appnew;
 
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -21,6 +23,7 @@ import android.widget.TimePicker;
 
 import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
 import com.example.igulhane73.appnew.info.ConfigTableData;
+import com.example.igulhane73.appnew.utils.AddingPDS;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +33,7 @@ import java.util.List;
  */
 public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.EventViewHolder> {
     private Context mContext;
+    String location = "";
     private LayoutInflater inflator;
     List<UserEvent> eventList = Collections.emptyList();
     public EventViewAdapter(Context context){
@@ -54,7 +58,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_row, null);
         EventViewHolder eventViewHolder = new EventViewHolder(view);
-
         return eventViewHolder;
     }
 
@@ -71,18 +74,23 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
         holder.days_set[4]=event.getThur()==1?true:false;
         holder.days_set[5]=event.getFri()==1?true:false;
         holder.days_set[6]=event.getSat()==1?true:false;
+        for (int i = 0; i < 7; i++) {
+            holder.temp[i] = holder.days_set[i];
+        }
         holder.toggle.setChecked(event.isActive());
+        location = event.getLocation();
         String s=event.mode;
         if(event.mode.equals("All")){
-            holder.modebutton.setImageResource(R.drawable.all);
+            holder.modebutton.setImageResource(R.drawable.ic_audio_track);
             holder.modebutton.setTag("All");
         }else if(event.mode.equals("Priority")){
-            holder.modebutton.setImageResource(R.drawable.silent);
+            holder.modebutton.setImageResource(R.drawable.ic_star);
             holder.modebutton.setTag("Priority");
         }else if(event.mode.equals("None")){
-            holder.modebutton.setImageResource(R.drawable.dnd);
+            holder.modebutton.setImageResource(R.drawable.ic_remove_circle);
             holder.modebutton.setTag("None");
         }
+
     }
 
     public int getColor(int i){
@@ -105,59 +113,64 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
         ImageButton imageButton;
         ImageButton modebutton;
         ImageButton weeklySchedule;
-        boolean days_set[]= new boolean[7];
-        /*TextView sunday;
-        TextView tuesday;
-        TextView wednesday;
-        TextView thursday;
-        TextView friday;
-        TextView saturday;
-        TextView monday;*/
-
+        ImageButton map;
+        boolean days_set[] = new boolean[7];
+        boolean temp[] = new boolean[7];
         public EventViewHolder(final View itemView) {
             super(itemView);
             textView = (EditText) itemView.findViewById(R.id.event_name);
             String text=textView.getText().toString();
-            textView.addTextChangedListener(new TextWatcher() {
+            textView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public boolean onTouch(View v, MotionEvent event) {
+                    textView.setFocusable(true);
+                    Drawable dbl = ResourcesCompat.getDrawable(mContext.getResources(), R.drawable.done, null) ;
+                    if (event.getRawX() >= (textView.getRight() - dbl.getIntrinsicWidth())){
+                    //textView.setFocusable(true);
+                        textView.setCompoundDrawables(null, null, null, null);
+                        textView.setFocusable(false);
+                        //textView.clearFocus();
+                        textView.setFocusableInTouchMode(false);
+                        ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
+                        ContentValues cv = new ContentValues();
+                        cv.put(ConfigTableData.TimeConfigTableInfo.name , textView.getText().toString());
+                        cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                        updateUsingId(true ,eventList.get(getPosition()));
                 }
+                    else{
+                        int h = dbl.getIntrinsicHeight();
+                        int w = dbl.getIntrinsicWidth();
+                        dbl.setBounds(0, 0, w, h);
+                        textView.setCompoundDrawables(null, null, dbl, null);
+                        textView.setFocusable(true);
+                        //textView.clearFocus();
+                        textView.setFocusableInTouchMode(true);
 
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-               /*     final String s1= (String) s;
-                    AlertDialog.Builder builder = new AlertDialog.Builder(imageButton.getContext());
-                    builder.setTitle("Update Name");
-                    builder.setMessage("Do you want to save changes ?");
-                    builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            textView.setText(s1);
-                            notifyDataSetChanged();
-                        }
-                    });
-                    builder.show();*/
-                }
+                    }
 
-                @Override
-                public void afterTextChanged(final Editable s) {
-
-
+                    /*if (event.getX() > textView.getWidth() - textView.getPaddingRight() - x.getIntrinsicWidth()) {
+                        textView.setText("adas");
+                        //textView.setCompoundDrawables(null, null, null, null);
+                    }*/
+                    return false;
                 }
             });
+          /*View.OnClickListener onclicklistener = new View.OnClickListener() {
+                public void onClick(View v) {
+                    textView.setText((new String("HImesh ")).toCharArray() , 0 , 5);
+                    textView.setEnabled(true);
+                }
+            };*/
+            //textView.setOnClickListener(onclicklistener);
             start_time = (TextView) itemView.findViewById(R.id.start_time);
             start_time.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    int hour = 0, minutes = 0;
+                    int hour = Integer.parseInt(start_time.getText().toString().split(":")[0]) , minutes = Integer.parseInt(start_time.getText().toString().split(":")[1].split(" ")[0]);
+                    if (start_time.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                        hour = hour + 12;
+                    }
                     TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -168,7 +181,8 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                                 ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(view.getContext());
                                 ContentValues cv = new ContentValues();
                                 cv.put(ConfigTableData.TimeConfigTableInfo.time , time);
-                                cdp.updateUserData(cv , ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                                cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId() , null , null);
+                                updateUsingId(true ,eventList.get(getPosition()));
                             }
 
                         }
@@ -183,44 +197,48 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
 
                 @Override
                 public void onClick(View v) {
-                    int hour = 0  , minutes = 0;
+                    int hour = Integer.parseInt(end_time.getText().toString().split(":")[0]) , minutes = Integer.parseInt(end_time.getText().toString().split(":")[1].split(" ")[0]);
+                    if (end_time.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                        hour = hour + 12;
+                    }
                     TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hour, int minutes) {
-                            String time=getTime(hour, minutes);
-                            if(end_time.getText()!=time) {
+                            String time = getTime(hour, minutes);
+                            if (end_time.getText() != time) {
                                 end_time.setText(time);
                                 //Update query here
                                 ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
                                 ContentValues cv = new ContentValues();
-                                cv.put(ConfigTableData.TimeConfigTableInfo.Etime , time);
+                                cv.put(ConfigTableData.TimeConfigTableInfo.Etime, time);
                                 cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
-
+                                updateUsingId(true ,eventList.get(getPosition()));
                             }
                         }
-                    } ,  hour, minutes, false);
+                    }, hour, minutes, false);
                     timePickerDialog.show();
                 }
             });
-            modebutton= (ImageButton) itemView.findViewById(R.id.mode);
+            modebutton = (ImageButton) itemView.findViewById(R.id.mode);
             modebutton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(modebutton.getTag().toString().equals("All")){
+                        modebutton.setImageResource(R.drawable.ic_star);
+                        modebutton.setTag("Priority");
+                    } else if (modebutton.getTag().toString().equals("Priority")) {
+                        modebutton.setImageResource(R.drawable.ic_remove_circle);
+                        modebutton.setTag("None");
+                    } else if (modebutton.getTag().toString().equals("None")) {
+                        modebutton.setImageResource(R.drawable.ic_audio_track);
+                        modebutton.setTag("All");
+                    }
                     ConfigDatabaseOperations cdp = new ConfigDatabaseOperations(mContext);
                     ContentValues cv = new ContentValues();
                     cv.put(ConfigTableData.TimeConfigTableInfo.mode , modebutton.getTag().toString());
                     cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
-                    if(modebutton.getTag().toString().equals("All")){
-                        modebutton.setImageResource(R.drawable.silent);
-                        modebutton.setTag("Priority");
-                    }else if(modebutton.getTag().toString().equals("Priority")){
-                        modebutton.setImageResource(R.drawable.dnd);
-                        modebutton.setTag("None");
-                    }else if(modebutton.getTag().toString().equals("None")){
-                        modebutton.setImageResource(R.drawable.all);
-                        modebutton.setTag("All");
-                    }
-
+                    updateUsingId(false , eventList.get(getPosition()));
+                    updateUsingId(true ,eventList.get(getPosition()));
                 }
             });
             imageButton = (ImageButton) itemView.findViewById(R.id.delete);
@@ -240,6 +258,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            updateUsingId(false ,eventList.get(getPosition()));
                             delete(getPosition());
                         }
                     });
@@ -249,7 +268,6 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
             });
             final CharSequence[] items = {" Sunday "," Monday "," Tuesday "," Wednesday " ," Thursday ",
             " Friday ", " Saturday "};
-            final boolean temp[]= new boolean[7];
             for (int i=0;i<7;i++){
                 temp[i]=days_set[i];
             }
@@ -263,7 +281,7 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                         @Override
                         public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                             if (isChecked) {
-                                days_set[which] = true;
+                              days_set[which] = true;
                             } else {
                                 days_set[which] = false;
                             }
@@ -273,9 +291,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                     builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            for (int i=0;i<7;i++){
-                                days_set[i]=temp[i];
+                            for (int i = 0; i < 7; i++) {
+                                days_set[i] = temp[i];
                             }
+                            dialog.dismiss();
                         }
                     });
                     builder.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
@@ -292,8 +311,10 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                             cv.put(ConfigTableData.TimeConfigTableInfo.WednesDay , days_set[3]==true?""+1:""+0);
                             cv.put(ConfigTableData.TimeConfigTableInfo.ThursDay , days_set[4]==true?""+1:""+0);
                             cv.put(ConfigTableData.TimeConfigTableInfo.FriDay , days_set[5]==true?""+1:""+0);
-                            cv.put(ConfigTableData.TimeConfigTableInfo.SaturDay , days_set[6]==true?""+1:""+0);
+                            cv.put(ConfigTableData.TimeConfigTableInfo.SaturDay , days_set[6]==true?""+1:""+ 0);
                             cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
+                            updateUsingId(false ,eventList.get(getPosition()));
+                            updateUsingId(true ,eventList.get(getPosition()));
                         }
                     });
                     builder.show();
@@ -311,12 +332,13 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
                         cv.put(ConfigTableData.TimeConfigTableInfo.active, true);
 
                     } else {
+                        updateUsingId(false ,eventList.get(getPosition()));
                         eventList.get(getPosition()).setActive(false);
                         cv.put(ConfigTableData.TimeConfigTableInfo.active, false);
 
                     }
                     cdp.updateUserData(cv, ConfigTableData.TimeConfigTableInfo.id + "  = " + eventList.get(getPosition()).getId(), null, null);
-
+                    updateUsingId(true ,eventList.get(getPosition()));
                 }
             });
         }
@@ -350,5 +372,30 @@ public class EventViewAdapter extends RecyclerView.Adapter<EventViewAdapter.Even
     public void addEvent(UserEvent event) {
         eventList.add(event);
         notifyDataSetChanged();
+    }
+    public void updateUsingId(boolean isUpdate , UserEvent ue){
+        if (isUpdate == false){
+            PendingIntent pd = AddingPDS.get_PendingIntent(mContext,
+            ue.getTitle(),2,ue.getId() , mContext.getString(R.string.startMode),
+            "-", ue.getMode(),1 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),3,ue.getId() , mContext.getString(R.string.startMode),
+                    "-", ue.getMode(),2 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),4,ue.getId() , mContext.getString(R.string.stopMode),
+                    "+", ue.getMode(),1 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+            pd = AddingPDS.get_PendingIntent(mContext,
+                    ue.getTitle(),5,ue.getId() , mContext.getString(R.string.stopMode),
+                    "+", ue.getMode(),2 , PendingIntent.FLAG_UPDATE_CURRENT);
+            pd.cancel();
+
+        }
+        else {
+            AddingPDS.updateAlarmById(ue.getId(), mContext);
+        }
+
     }
 }

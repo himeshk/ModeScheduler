@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.igulhane73.appnew.dbOps.ConfigDatabaseOperations;
 
@@ -52,7 +53,10 @@ public class AddDialog extends ActionBarActivity {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int hour = 0  , minutes = 0;
+                int hour = Integer.parseInt(start.getText().toString().split(":")[0]) , minutes = Integer.parseInt(start.getText().toString().split(":")[1].split(" ")[0]);
+                if (start.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                    hour = hour + 12;
+                }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -69,7 +73,10 @@ public class AddDialog extends ActionBarActivity {
         end.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int hour = 0  , minutes = 0;
+                int hour = Integer.parseInt(end.getText().toString().split(":")[0]) , minutes = Integer.parseInt(end.getText().toString().split(":")[1].split(" ")[0]);
+                if (end.getText().toString().split(":")[1].split(" ")[1].trim().equals("PM")){
+                    hour = hour + 12;
+                }
                 TimePickerDialog timePickerDialog = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hour, int minutes) {
@@ -106,6 +113,7 @@ public class AddDialog extends ActionBarActivity {
                 Log.d(" Id 0" , highestId + " ");
 
                 EditText etName = (EditText) findViewById(R.id.event_id);
+                EditText location = (EditText) findViewById(R.id.event_location);
                 Intent data = new Intent();
                 UserEvent userEvent = new UserEvent();
                 userEvent.setTitle(etName.getText().toString());
@@ -119,14 +127,23 @@ public class AddDialog extends ActionBarActivity {
                 userEvent.setFri(fri);
                 userEvent.setSat(sat);
                 userEvent.setMode(mode);
+                userEvent.setLocation(location.getText().toString());
                 userEvent.setActive(true);
                 userEvent.setId(highestId);
-                data.putExtra("event", userEvent);
-                setResult(RESULT_OK, data);
-                cdo.addNewTimeConfig(cdo ,highestId , start_time,end_time , mode ,
-                        "" + sun ,"" + mon ,"" + tue , "" + wed ,
-                        "" + thur , "" + fri , "" + sat , etName.getText().toString() , true);
-                finish();
+                String chk=getValidation(userEvent);
+                if(chk.equals("valid")) {
+                    data.putExtra("event", userEvent);
+                    setResult(RESULT_OK, data);
+                    cdo.addNewTimeConfig(cdo ,highestId , start_time,end_time , mode ,
+                            "" + sun ,"" + mon ,"" + tue , "" + wed ,
+                            "" + thur , "" + fri , "" + sat , etName.getText().toString() , true);
+                    finish();
+                }else{
+                    Toast toast = Toast.makeText(v.getContext(),chk,Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+
+
 
             }
         });
@@ -210,6 +227,19 @@ public class AddDialog extends ActionBarActivity {
         }
 
 
+    }
+
+
+    public String getValidation(UserEvent event){
+        if(event.getTitle()==null||event.getTitle().equals("")){
+            return "Event Name Missing..!!";
+        }
+        if(event.getSun()==0 && event.getMon()==0 && event.getTue()==0 &&
+                event.getWed()==0 && event.getThur()==0 && event.getFri()==0
+                && event.getSat()==0){
+            return "Select Event Day..!!";
+        }
+        return "valid";
     }
 
 }

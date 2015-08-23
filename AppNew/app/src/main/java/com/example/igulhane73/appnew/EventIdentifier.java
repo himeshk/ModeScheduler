@@ -1,5 +1,7 @@
 package com.example.igulhane73.appnew;
 
+import android.view.View;
+
 /**
  * Created by igulhane73 on 8/7/15.
  */

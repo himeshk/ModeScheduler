@@ -13,6 +13,7 @@ public class UserEvent implements Serializable {
     String mode;
     String endTime;
     boolean active;
+    String location;
     int weekday[];
     int sun;
     int mon;
@@ -29,6 +30,14 @@ public class UserEvent implements Serializable {
         active=false;
         start_time="";
         end_time="";
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getStart_time() {
